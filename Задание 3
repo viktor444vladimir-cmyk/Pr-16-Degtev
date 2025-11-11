@@ -1,0 +1,71 @@
+public class Temperature
+{
+    public double Celsius { get; set; }
+
+    public Temperature(double celsius)
+    {
+        Celsius = celsius;
+    }
+
+    public static bool operator >(Temperature t1, Temperature t2)
+    {
+        return t1.Celsius > t2.Celsius;
+    }
+
+    public static bool operator <(Temperature t1, Temperature t2)
+    {
+        return t1.Celsius < t2.Celsius;
+    }
+
+    public static bool operator ==(Temperature t1, Temperature t2)
+    {
+        if (ReferenceEquals(t1, t2))
+            return true;
+        if (t1 is null || t2 is null)
+            return false;
+        return t1.Celsius == t2.Celsius;
+    }
+
+    public static bool operator !=(Temperature t1, Temperature t2)
+    {
+        return !(t1 == t2);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Temperature other)
+            return this.Celsius == other.Celsius;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return Celsius.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return $"{Celsius}°C";
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var t1 = new Temperature(25);
+        var t2 = new Temperature(30);
+
+        Console.WriteLine(t1);
+        Console.WriteLine(t2 > t1);
+        Console.WriteLine(t1 == new Temperature(25));
+
+        Console.WriteLine(t1 < t2);
+        Console.WriteLine(t1 != t2);
+        Console.WriteLine(t1 == t2);
+
+        var t3 = new Temperature(25);
+        Console.WriteLine(t1 == t3);
+        Console.WriteLine(t1 != t3);
+    }
+}
