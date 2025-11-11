@@ -1,0 +1,90 @@
+public class Book
+{
+    private string[] chapters;
+    private const int InitialCapacity = 10;
+
+    public Book()
+    {
+        chapters = new string[InitialCapacity];
+    }
+
+    public string this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= chapters.Length)
+                throw new IndexOutOfRangeException($"Глава с индексом {index} не существует");
+
+            return chapters[index] ?? "[Пустая глава]";
+        }
+        set
+        {
+            if (index < 0)
+                throw new IndexOutOfRangeException("Индекс не может быть отрицательным");
+
+            if (index >= chapters.Length)
+            {
+                int newSize = Math.Max(index + 1, chapters.Length * 2);
+                Array.Resize(ref chapters, newSize);
+            }
+
+            chapters[index] = value;
+        }
+    }
+
+    public int ChapterCount
+    {
+        get
+        {
+            int count = 0;
+            for (int i = 0; i < chapters.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(chapters[i]))
+                    count++;
+            }
+            return count;
+        }
+    }
+
+    public override string ToString()
+    {
+        var result = new System.Text.StringBuilder();
+        int chapterNumber = 1;
+
+        for (int i = 0; i < chapters.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(chapters[i]))
+            {
+                result.AppendLine($"{chapterNumber}. {chapters[i]}");
+                chapterNumber++;
+            }
+        }
+
+        if (result.Length == 0)
+            return "В книге нет глав";
+
+        return result.ToString().TrimEnd();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var book = new Book();
+        book[0] = "Введение";
+        book[1] = "Глава 1";
+
+        Console.WriteLine(book[0]);
+        Console.WriteLine(book);
+    
+        book[3] = "Глава 2";
+        book[2] = "Глава 1.5";
+
+        Console.WriteLine("\nПосле добавления глав:");
+        Console.WriteLine(book);
+    
+        Console.WriteLine($"\nВсего глав: {book.ChapterCount}");
+        Console.WriteLine($"Глава с индексом 2: {book[2]}");
+    }
+}
