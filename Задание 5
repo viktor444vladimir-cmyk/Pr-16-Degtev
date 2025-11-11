@@ -1,0 +1,104 @@
+public class Vector
+{
+    private double[] components;
+
+    public Vector(params double[] components)
+    {
+        if (components == null || components.Length == 0)
+            throw new ArgumentException("Вектор должен иметь хотя бы одну компоненту");
+
+        this.components = new double[components.Length];
+        Array.Copy(components, this.components, components.Length);
+    }
+
+    public int Dimension => components.Length;
+
+    public double this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= components.Length)
+                throw new IndexOutOfRangeException($"Индекс {index} выходит за границы вектора");
+
+            return components[index];
+        }
+        set
+        {
+            if (index < 0 || index >= components.Length)
+                throw new IndexOutOfRangeException($"Индекс {index} выходит за границы вектора");
+
+            components[index] = value;
+        }
+    }
+
+    public static double operator *(Vector v1, Vector v2)
+    {
+        if (v1.Dimension != v2.Dimension)
+            throw new ArgumentException("Векторы должны иметь одинаковую размерность для скалярного произведения");
+
+        double result = 0;
+        for (int i = 0; i < v1.Dimension; i++)
+        {
+            result += v1[i] * v2[i];
+        }
+        return result;
+    }
+
+    public override string ToString()
+    {
+        return "[" + string.Join(", ", components) + "]";
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Vector other && other.Dimension == this.Dimension)
+        {
+            for (int i = 0; i < Dimension; i++)
+            {
+                if (this[i] != other[i])
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return components.GetHashCode();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var v1 = new Vector(1, 2, 3);
+        var v2 = new Vector(4, 5, 6);
+
+        Console.WriteLine(v1 * v2);
+
+        v1[1] = 10;
+        Console.WriteLine(v1);
+
+        Console.WriteLine($"v1: {v1}");
+        Console.WriteLine($"v2: {v2}");
+        Console.WriteLine($"Размерность v1: {v1.Dimension}");
+
+        Console.WriteLine($"v1[0] = {v1[0]}");
+        Console.WriteLine($"v1[2] = {v1[2]}");
+
+        var v3 = new Vector(1, 2);
+        var v4 = new Vector(3, 4);
+        Console.WriteLine($"v3 * v4 = {v3 * v4}");
+
+        try
+        {
+            var result = v1 * v3;
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Ошибка: {ex.Message}");
+        }
+    }
+}
